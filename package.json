@@ -15,15 +15,15 @@
   "author": "MMT",
   "license": "ISC",
   "dependencies": {
-    "@whiskeysockets/baileys": "6.7.17",
-    "awesome-phonenumber": "^2.64.0",
-    "body-parser": "^1.20.1",
-    "express": "^4.18.1",
-    "megajs": "^1.1.0",
+    "@whiskeysockets/baileys": "^7.0.0",
+    "awesome-phonenumber": "^7.8.0",
+    "body-parser": "^2.3.0",
+    "express": "^5.2.1",
+    "megajs": "^1.3.10",
     "path": "^0.12.7",
-    "phone": "3.1.30",
-    "pino": "^8.1.0",
-    "qrcode": "^1.5.3",
+    "phone": "^3.1.71",
+    "pino": "^10.3.1",
+    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0"
   }
 }
