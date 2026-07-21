@@ -182,7 +182,7 @@ router.get("/", async (req, res) => {
             if (!res.headersSent) {
                 res.status(503).send({ code: "Service Unavailable" });
             }
-            setTimeout(() => process.exit(1), 2000);w
+            setTimeout(() => process.exit(1), 2000);
         }
     }
 
