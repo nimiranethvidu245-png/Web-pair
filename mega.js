@@ -1,84 +1,52 @@
-
 import * as mega from "megajs";
 import fs from "fs";
 
-// Mega authentication credentials
 const auth = {
-    email: "nimiranethvidu245@gmail.com", 
-    password: "Love#1234@", 
-    userAgent:
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246",
+  email: "nimiranethvidu245@gmail.com",
+  password: "Love#1234@",
+  userAgent:
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
 };
 
 export const upload = (filePath, fileName) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const storage = new mega.Storage(auth, (err) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
+  return new Promise((resolve, reject) => {
+    const storage = new mega.Storage(auth, (err) => {
+      if (err) return reject(err);
 
-                const readStream = fs.createReadStream(filePath);
+      const uploadStream = storage.upload({
+        name: fileName,
+        allowUploadBuffering: true,
+      });
 
-                const uploadStream = storage.upload({
-                    name: fileName,
-                    allowUploadBuffering: true,
-                });
+      fs.createReadStream(filePath)
+        .pipe(uploadStream)
+        .on("error", reject);
 
-                readStream.pipe(uploadStream);
+      uploadStream.on("complete", (file) => {
+        file.link((err, url) => {
+          if (err) return reject(err);
+          resolve(url);
+        });
+      });
 
-                uploadStream.on("complete", (file) => {
-                    file.link((err, url) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            storage.close();
-                            resolve(url);
-                        }
-                    });
-                });
-
-                uploadStream.on("error", (error) => {
-                    reject(error);
-                });
-
-                readStream.on("error", (error) => {
-                    reject(error);
-                });
-            });
-
-            storage.on("error", (error) => {
-                reject(error);
-            });
-        } catch (err) {
-            reject(err);
-        }
+      uploadStream.on("error", reject);
     });
+
+    storage.on("error", reject);
+  });
 };
 
 export const download = (url) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const file = mega.File.fromURL(url);
+  return new Promise((resolve, reject) => {
+    const file = mega.File.fromURL(url);
 
-            file.loadAttributes((err) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
+    file.loadAttributes((err) => {
+      if (err) return reject(err);
 
-                file.downloadBuffer((err, buffer) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(buffer);
-                    }
-                });
-            });
-        } catch (err) {
-            reject(err);
-        }
+      file.downloadBuffer((err, buffer) => {
+        if (err) return reject(err);
+        resolve(buffer);
+      });
     });
+  });
 };
-
