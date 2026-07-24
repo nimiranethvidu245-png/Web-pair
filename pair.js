@@ -44,15 +44,18 @@ router.get("/", async (req, res) => {
     num = num.replace(/[^0-9]/g, "");
 
     const phone = pn("+" + num);
-    if (!phone.isValid()) {
-        if (!res.headersSent) {
-            return res.status(400).send({
-                code: "Invalid phone number. Please enter your full international number (e.g., 15551234567 for US, 447911123456 for UK, 84987654321 for Vietnam, etc.) without + or spaces.",
-            });
-        }
-        return;
+const phone = pn("+" + num);
+
+if (!phone.valid) {
+    if (!res.headersSent) {
+        return res.status(400).send({
+            code: "Invalid phone number. Please enter your full international number.",
+        });
     }
-    num = phone.getNumber("e164").replace("+", "");
+    return;
+}
+
+num = phone.number.e164.replace("+", "");
 
     async function initiateSession() {
         const { state, saveCreds } = await useMultiFileAuthState(dirs);
