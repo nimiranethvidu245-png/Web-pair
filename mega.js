@@ -1,28 +1,130 @@
-const mega = require("megajs");
-const auth = {
-    email: 'nimiranethvidu245@gmail.com',
-    password: 'nimira@2009',
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'
-}
+import mega from "megajs";
+import fs from "fs";
 
-const upload = (data, name) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const storage = new mega.Storage(auth, () => {
-                data.pipe(storage.upload({name: name, allowUploadBuffering: true}));
-                storage.on("add", (file) => {
-                    file.link((err, url) => {
-                        if (err) throw err;
-                        storage.close()
-                        resolve(url);
-                    });
-                });
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+
+
+const auth = {
+
+    email:
+    process.env.nimiranethvidu245@gmail.com,
+
+    password:
+    process.env.nimira@2009,
+
+
+    userAgent:
+    "Mozilla/5.0"
+
 };
 
-module.exports = { upload };
-      
+
+
+
+
+function upload(filePath, fileName){
+
+
+    return new Promise(
+    (resolve,reject)=>{
+
+
+        try{
+
+
+            const storage =
+            new mega.Storage(
+                auth,
+                ()=>{
+
+
+                    console.log(
+                        "✅ Mega connected"
+                    );
+
+
+
+                    const uploadFile =
+                    storage.upload({
+
+                        name:fileName
+
+                    });
+
+
+
+                    fs.createReadStream(
+                        filePath
+                    )
+                    .pipe(
+                        uploadFile
+                    );
+
+
+
+
+
+                    uploadFile.on(
+                    "complete",
+                    (file)=>{
+
+
+                        file.link(
+                        (err,url)=>{
+
+
+                            if(err){
+
+                                storage.close();
+
+                                return reject(err);
+
+                            }
+
+
+
+                            console.log(
+                                "✅ Upload complete"
+                            );
+
+
+
+                            storage.close();
+
+
+
+                            resolve(url);
+
+
+
+                        });
+
+
+                    });
+
+
+
+                });
+
+
+        }
+        catch(err){
+
+
+            reject(err);
+
+
+        }
+
+
+    });
+
+
+}
+
+
+
+
+
+export {
+    upload
+};
